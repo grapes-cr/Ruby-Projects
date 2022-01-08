@@ -1,6 +1,6 @@
 class Shelf
   attr_accessor :candies
-  def initialize
+  def initialize()
     @candies = []
   end
 end
