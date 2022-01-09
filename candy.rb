@@ -1,10 +1,8 @@
 class Candy
-  attr_accessor :name, :shelved
+  # Candy contains a name and a boolean to show if it is shelved or not.
+  attr_accessor :name, :isShelved
   def initialize(name="")
     @name = name
-    @shelved = false
+    @isShelved = false
   end
 end
-
-#taffy = Candy.new("Taffy")
-#puts "#{taffy.name} #{taffy.shelved}"
