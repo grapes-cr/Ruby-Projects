@@ -9,6 +9,7 @@ shopList = []
 
 while not done
   puts "\nWelcome to the Candy Shop Maker! Main menu: \n1: Create a Shop \n2: Create, Add, or Remove a Shelf \n3: Create, Add, or Remove Candies \n4: View Your Shelves \n5: View Your Candies \n6: Exit"
+  print "\nYour Input: "
   menuInput = gets.chomp.to_i
   case menuInput
   when 1
@@ -58,6 +59,7 @@ while not done
 
   when 2
     puts "\n1: Create a Shelf \n2: Add a Shelf to Shop \n3: Remove a Shelf from Shop \n4: Remove a Shelf in Storage"
+    print "\nYour input: "
     input = gets.chomp.to_i
     case input
     when 1
@@ -137,10 +139,97 @@ while not done
   end
 
 when 3
-  puts "yes"
+  # Create, Add, or Remove candies.
+  puts "\n1: Create Candies \n2: Add a Candy to a Shop \n3: Remove a Candy from a Shop \n4: Remove a Candy from Storage"
+  print "\nYour input: "
+  input = gets.chomp.to_i
+  case input
+  when 1
+    # Create candies.
+    candyCount = 0
+    puts "\nList all of the candies you'd like to make (Separate each candy with a comma)."
+    candy = gets.chomp.split(",")
+    if candy.length <= 0
+      puts "\nI won't make any candies for you then."
+    else
+      puts "\nAlright! I just made candies: "
+    while candyCount < candy.length
+      looseCandies.push(Candy.new(candy[candyCount]))
+      print "#{looseCandies[candyCount].name}, "
+      candyCount += 1
+    end
+    print "(#{candy.length} in total).\n"
+  end
+
+  when 2
+    # Add a shelf to a shop.
+    if shopList.length <= 0
+      puts "\nYou don't currently have any shops. You can create one in the main menu."
+    elsif looseShelves.length <= 0
+      puts "\nYou don't have any shelves. You should create one first."
+    else
+    puts "\nYou currently have #{looseShelves.length} shelves in storage. Which shelf would you like to add to a shop? (Input the number of the shelf.)"
+    shelves = gets.chomp.to_i
+    if shelves < 1 or shelves > looseShelves.length
+      puts "You don't have that many shelves.."
+    else
+      puts "\nWhich shop would you like to add shelf #{shelves} in? Your shops: "
+      shopList.each { |shop| print "#{shop.name}, "}
+      print "(#{shopList.length} in total). Type the number of shop you want.\n"
+      shops = gets.chomp.to_i
+      if shops < 1 or shops > shopList.length
+        puts "You don't have that many shops.."
+      else
+        shopList[shops-1].shelves.push(looseShelves[shelves-1])
+        looseShelves.delete_at(shelves-1)
+        puts "#{shopList[shops-1].shelves}"
+      end
+    end
+  end
+
+when 3
+  if shopList.length <= 0
+    puts "\nYou don't have any shops. You can create one in the main menu."
+  else
+    puts "\nYou currently have #{shopList.length} shops. Select a shop (Input the shop number)."
+    shops = gets.chomp.to_i
+    if shops < 1 or shops > shopList.length
+      puts "You don't have that many shops.."
+    else
+      puts "\n#{shopList[shops-1].name} has #{shopList[shops-1].shelves.length} shelves. Which shelf would you like to remove?"
+      shelves = gets.chomp.to_i
+      if shelves < 1 or shelves > shopList[shops-1].shelves.length
+        puts "#{shopList[shops-1]} doesn't have that many shelves."
+      else
+        shopList[shops-1].shelves.delete_at(shelves-1)
+        puts "#{shopList[shops-1].shelves}"
+      end
+    end
+  end
+
 
 when 4
-  puts "\n1: View Shelves in a Shop \n2:View Shelves in Storage"
+  # Remove a shelf.
+  if looseShelves.length <= 0
+    puts "\nYou don't have any shelves."
+  else
+    puts "\nYou currently have #{looseShelves.length} shelves in storage. Which shelf would you like to remove? (Input the number of the shelf.)"
+    shelves = gets.chomp.to_i
+    if shelves < 1 or shelves > looseShelves.length
+      puts "You don't have that many shelves.."
+    else
+      looseShelves.delete_at(shelves-1)
+      puts "#{looseShelves}"
+    end
+  end
+else
+  puts "\nI didn't understand that."
+end
+
+
+when 4
+  # View Shelves.
+  puts "\n1: View Shelves in a Shop \n2: View Shelves in Storage"
   count = 1
   input = gets.chomp.to_i
   if input < 1 or input > 2
@@ -166,10 +255,26 @@ when 4
     end
   end
 
-
-
 when 5
-  puts "\nView Your Candies"
+  # View candies.
+  if shopList.length <= 0 and looseCandies.length <= 0
+    puts "\nThere aren't any candies anywhere!"
+  else
+    puts "\nYour candies: \n"
+    shopList.each do |shop|
+      puts "\nIn store #{shop.name}: "
+      shop.shelves.each do |shelf|
+        shelf.candies.each { |candy| puts "#{candy.name} (Shelved = #{candy.isShelved})" }
+      end
+    end
+    if looseCandies.length > 0
+      puts "\n"
+      looseCandies.each { |candy| puts "#{candy.name} (Shelved = #{candy.isShelved})" }
+    end
+  end
+
+
+
 when 6
   done = true
 else
